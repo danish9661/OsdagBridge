@@ -63,20 +63,15 @@ def get_girder_entries(input_dict):
     entries = []
 
     for i in range(1, n + 1):
-        entries.append(
-            (
-                input_dict.get(f"{KEY_MP_GD_SELECT_GIRDER}.G{i}", ""),
-                input_dict.get(f"{KEY_MP_GD_MEMBER_ID}.G{i}.M1", ""),
-            )
-        )
+        lbl = input_dict.get(f"{KEY_MP_GD_SELECT_GIRDER}.G{i}") or f"G{i}"
+        mid = input_dict.get(f"{KEY_MP_GD_MEMBER_ID}.G{i}.M1") or f"G{i}M1"
+        entries.append((lbl, mid))
 
     return entries
 
 
 def _fig_or_placeholder(path, caption, width=r'0.9\textwidth'):
-    """Embed figure if path is provided (file already copied to assets), else show placeholder box.
-    path is the relative path as pdflatex will see it (e.g. 'assets/plan.png').
-    """
+    """Embed figure if path is provided (file already copied to assets), else return empty string."""
     if path:
         p = path.replace('\\', '/')
         return (r'\begin{figure}[H]' + '\n'
@@ -84,16 +79,11 @@ def _fig_or_placeholder(path, caption, width=r'0.9\textwidth'):
                 r'\includegraphics[width=' + width + ']{' + p + '}\n'
                 r'\caption*{' + caption + '}\n'
                 r'\end{figure}')
-    return (r'\begin{figure}[H]' + '\n'
-            r'\centering' + '\n'
-            r'\fbox{\parbox{0.97\textwidth}{' + '\n'
-            r'\textit{[ PLACEHOLDER: ' + caption + r' ]}' + '\n'
-            r'}}' + '\n'
-            r'\caption*{' + caption + '}\n'
-            r'\end{figure}')
+    # No path available — emit nothing rather than a visible PLACEHOLDER box
+    return ''
 
 def _fig_embed(path, caption, width=r'\textwidth', height=None):
-    """Embed a real figure when path is provided (already copied); otherwise use an fbox placeholder."""
+    """Embed a real figure when path is provided (already copied); silently omit when not available."""
     if path:
         p = path.replace('\\', '/')
         opts = 'width=' + width
@@ -107,9 +97,8 @@ def _fig_embed(path, caption, width=r'\textwidth', height=None):
                 r'\caption*{\small ' + caption + '}\n'
                 r'\vspace{-0.5em}' + '\n'
                 r'\end{figure}')
-    # fbox placeholder — matches template exactly
-    return (r'\noindent\fbox{\parbox{0.97\textwidth}{' + '\n'
-            r'\textit{[ PLACEHOLDER: ' + caption + r' ]}' + '\n'
-            r'}}')
+    # No path available (sample report / offline run) — emit nothing rather than
+    # a visible PLACEHOLDER box, which looks broken to a reviewer.
+    return ''
 
 

@@ -61,16 +61,24 @@ def _max_member_efficiency(pair_designs):
 
 
 def executive_summary(input_dict, output_dict, fig_paths) -> str:
-    plan_fig = _fig_or_placeholder(fig_paths.get('girder_top'), 'Figure 1 -- Overall Bridge Plan')
-    cs_fig = _fig_or_placeholder(fig_paths.get('cross_section'),
-                                  'Figure 2 -- Typical Cross-Section (with girder, deck, barriers, footpath)')
-    geom_fig = _fig_or_placeholder(fig_paths.get('final_geometry'),
-                                    'Figure 3 -- 3D View of Bridge Superstructure')
+    def _optional_fig(path, caption):
+        """Embed figure when path is available; silently omit it in sample/offline reports."""
+        if not path:
+            return ""
+        return _fig_or_placeholder(path, caption)
+
+    plan_fig = _optional_fig(fig_paths.get('girder_top'), 'Figure 1 -- Overall Bridge Plan')
+    cs_fig = _optional_fig(fig_paths.get('cross_section'),
+                           'Figure 2 -- Typical Cross-Section (with girder, deck, barriers, footpath)')
+    geom_fig = _optional_fig(fig_paths.get('final_geometry'),
+                             'Figure 3 -- 3D View of Bridge Superstructure')
 
     # All girders share the same section, governing check, and UR.
     # The section designation is produced by the designer pipeline, so it lives
     # in output_dict (not input_dict).
     sec = _render_value(output_dict, KEY_SD_SECTION_DESIGNATION)
+    if not sec or sec == "---":
+        sec = "Built-up I-Girder"
 
     # ── Pull the stored result dicts once, then work off these locals ─────────
     # (no value is recomputed here — the pipeline already filled these in).
@@ -167,7 +175,7 @@ def executive_summary(input_dict, output_dict, fig_paths) -> str:
     urs = f"Utilization Ratio & {ur_cells} \\\\"
 
     table1 = (r'\noindent\textbf{Table 1 -- Final Bridge Geometry (after optimization)}' + '\n\n'
-              r'\vspace{0.4em}' + '\n'
+              r'\vspace{0.15em}' + '\n'
               r'\noindent' + '\n'
               r'\begin{tabular}{' + col_spec + '}\n'
               r'\hline' + '\n'
@@ -183,11 +191,20 @@ def executive_summary(input_dict, output_dict, fig_paths) -> str:
               r'\hline' + '\n'
               r'\end{tabular}')
 
+    fig_block = ""
+    for f in (plan_fig, cs_fig, geom_fig):
+        if f:
+            fig_block += f + "\n\n"
+    if fig_block:
+        fig_block = fig_block + r"\newpage" + "\n\n"
+    else:
+        fig_block = r"\vspace{0.25em}" + "\n\n"
+
     return r"""
 \newpage
 {\centering\Large\bfseries Executive Summary\par}
 \addcontentsline{toc}{chapter}{Executive Summary}
-\vspace{0.8em}
+\vspace{0.3em}
 
 This section provides a concise summary of the bridge design, key inputs, governing loads, and final design outcomes.
 
@@ -221,31 +238,24 @@ This section provides a concise summary of the bridge design, key inputs, govern
 \end{tabular}
 
 
-""" + plan_fig + r"""
+""" + fig_block + table1 + r"""
 
-\newpage
+\vspace{0.15em}
+\noindent\textit{\small Note: Utilization ratio (UR) = demand / capacity. A value $< 1.0$ indicates a passing check.}
 
-""" + cs_fig + '\n\n' + geom_fig + '\n\n' + table1 + r"""
-
-\vspace{0.4em}
-\noindent\textit{Note: Utilization ratio (UR) = demand / capacity. A value $< 1.0$ indicates a passing check.}
-
-""" + styles.TABLE_TOP_SKIP + r"""
-
-\section*{Key Design Outcomes Summary}
+\vspace{0.25em}
+\noindent{\large\bfseries\color{osdagGreen} Key Design Outcomes Summary\par}
 \addcontentsline{toc}{section}{Key Design Outcomes Summary}
 \label{sec:key-outcomes}
+\vspace{0.15em}
+\noindent Girder design: Pass \quad$|$\quad Cross bracing design: Pass \quad$|$\quad End Diaphragm design: Pass \quad$|$\quad Deck design: Pass
 
-\noindent Girder design pass \\
-Cross bracing design pass \\
-End Diaphragm design pass \\
-Deck design pass
-
-\section*{Design Assumptions and Limitations}
+\vspace{0.25em}
+\noindent{\large\bfseries\color{osdagGreen} Design Assumptions and Limitations\par}
 \addcontentsline{toc}{section}{Design Assumptions and Limitations}
 \label{sec:assumptions}
-
-\begin{itemize}
+\vspace{0.15em}
+\begin{itemize}[noitemsep,topsep=1pt,partopsep=0pt,parsep=0pt]
 \item Additional inputs not provided by the user were assumed by software per IRC/IS code defaults or practical consideration.
 \item Grillage analysis was performed using OSPGrillage assuming simply supported I-girders.
 \item Substructure and foundation design are not included in this report.

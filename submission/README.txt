@@ -6,10 +6,10 @@ PDFs
   Report_After.pdf          enhanced output (all six requirements)
   Report_Real_Design.pdf    full OpenSees analysis and IRC 22 design
   OsdagBridge_Submission.pdf
-                            combined: technical report + before + after + real design (150 pages)
+                            combined: technical report + before + after + real design (153 pages)
 
 Video
-  Demo_Video_1080p.mp4      1920x1080, silent, 75 s
+  Demo_Video_1080p.mp4      1920x1080, silent, 64 s (clean GUI + before/after tables + charts + Page 30 proof)
   Demo_Live_X11_1080p.mp4   34 s real-time capture of the desktop UI
 
 The full artefact set (all PDFs, videos, screenshots, .tex sources and ZIP) is

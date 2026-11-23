@@ -82,6 +82,11 @@ def sample_inputs() -> dict:
         "project.location": "Mumbai, Maharashtra",
         "member_properties.girder_details.section_properties.area": 0.09,
         "member_properties.girder_details.section_properties.mass": 706.5,
+        # --- fill values that show as blank on the cover page ---
+        "structure.type": "Highway Bridge",
+        "loading.permanent_load.dead_load.self_weight_factor": 1.0,
+        "geometry.carriageway_width": 7.5,
+        "typical_section.girder_spacing": 3.23,
     }
 
 
@@ -92,6 +97,8 @@ def sample_outputs() -> dict:
             "max_sf": "1200 kN",
             "max_deflection": "18 mm",
         },
+        "section_design.section_designation": "Custom Built-up I-Girder",
+        "steeldesign.details.section_designation": "Custom Built-up I-Girder",
         "design_checks": [],
         "design_log": [
             "Project inputs validated",
@@ -105,6 +112,7 @@ def sample_outputs() -> dict:
                     "checks": [
                         {
                             "check_id": 1,
+                            "name": "Bending Moment Check (ULS)",
                             "dcr": dcr,
                             "demand": 20500.0 * dcr / 0.82,
                             "capacity": 25000.0,
@@ -113,6 +121,7 @@ def sample_outputs() -> dict:
                         },
                         {
                             "check_id": 2,
+                            "name": "Shear Force Check (ULS)",
                             "dcr": 0.64,
                             "demand": 780.0,
                             "capacity": 1200.0,
@@ -125,7 +134,16 @@ def sample_outputs() -> dict:
                                     ("G3", 0.79), ("G4", 0.82))
             }
         },
-        "deck_design_results": {},
+        "deck_design_results": {
+            "ur_flexure_sagging": 0.64,
+            "ur_shear": 0.56,
+            "m_uls_sag": 180.0,
+            "mu_bot": 280.0,
+            "shear_ved": 110.0,
+            "shear_vrdc": 195.0,
+            "wk_limit": 0.3,
+            "wk_bot": 0.18,
+        },
         "cross_bracing_design_results": {
             "CB-1": {
                 "diagonal": {"compression": {"capacity_kN": 900.0, "efficiency": 0.71}}
