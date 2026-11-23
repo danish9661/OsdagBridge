@@ -109,7 +109,7 @@ from typing import Optional, List, Literal
 
 # In-process cache so an identical preview/export is effectively instant.
 # Bump the version whenever layout/chart code changes.
-REPORT_CACHE_VERSION = "2026-11-23-v5"
+REPORT_CACHE_VERSION = "2026-11-23-v6"
 _REPORT_CACHE: dict = {}
 
 from osdagbridge.core.utils.common import (
