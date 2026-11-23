@@ -208,9 +208,11 @@ def executive_summary(input_dict, output_dict, fig_paths) -> str:
 
 This section provides a concise summary of the bridge design, key inputs, governing loads, and final design outcomes.
 
-\section*{Project Overview}
+\vspace{0.3em}
+\noindent{\large\bfseries\color{osdagGreen} Project Overview\par}
 \addcontentsline{toc}{section}{Project Overview}
 \label{sec:project-overview}
+\vspace{0.2em}
 
 
 \begin{tabular}{|L{5.5cm}|L{8.5cm}|}
